@@ -23,20 +23,21 @@ namespace FunctionApp1
             {
                 log.LogInformation("Function2 was triggered...");
 
-                await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+                var rand = new Random();
+                await Task.Delay(TimeSpan.FromSeconds(rand.NextInt64(1, 4)), cancellationToken);
 
                 return new OkObjectResult("Function2 executed successfully.");
             }
             catch (OperationCanceledException ex)
             {
                 log.LogError(ex, "Function2: Cancellation signal received from Host {0}", req.Host.ToString());
-                throw;
-            }
+				return new BadRequestObjectResult(ex);
+			}
             catch (Exception ex)
             {
                 log.LogError($"Function2: Error: {ex.Message}");
-                return null;
-            }
+				return new BadRequestObjectResult(ex);
+			}
             
         }
     }
